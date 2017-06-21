@@ -13,15 +13,15 @@ az network vnet create --resource-group myResourceGroup --name myVnet \
 # Create a public IP address.
 az network public-ip create --resource-group myResourceGroup --name myPublicIP
 
-# Create an Azure Network Load Balancer.
+# Create an Azure Load Balancer.
 az network lb create --resource-group myResourceGroup --name myLoadBalancer --public-ip-address myPublicIP \
   --frontend-ip-name myFrontEndPool --backend-pool-name myBackEndPool
 
-# Creates an NLB probe on port 80.
+# Creates an LB probe on port 80.
 az network lb probe create --resource-group myResourceGroup --lb-name myLoadBalancer \
   --name myHealthProbe --protocol tcp --port 80
 
-# Creates an NLB rule for port 80.
+# Creates an LB rule for port 80.
 az network lb rule create --resource-group myResourceGroup --lb-name myLoadBalancer --name myLoadBalancerRuleWeb \
   --protocol tcp --frontend-port 80 --backend-port 80 --frontend-ip-name myFrontEndPool \
   --backend-pool-name myBackEndPool --probe-name myHealthProbe
@@ -58,7 +58,7 @@ for i in `seq 1 3`; do
 done
 
 # Create an availability set.
-az vm availability-set create --resource-group myResourceGroup --name myAvailabilitySet --platform-fault-domain-count 3
+az vm availability-set create --resource-group myResourceGroup --name myAvailabilitySet --platform-fault-domain-count 3 --platform-update-domain-count 3
 
 # Create three virtual machines.
 for i in `seq 1 3`; do

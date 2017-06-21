@@ -1,26 +1,40 @@
 #!/bin/bash
 
 # Set an admin login and password for your database
-adminlogin=ServerAdmin
-password=ChangeYourAdminPassword1
+export adminlogin=ServerAdmin
+export password=ChangeYourAdminPassword1
 # The logical server name has to be unique in the system
-servername=server-$RANDOM
+export servername=server-$RANDOM
 # The ip address range that you want to allow to access your DB
-startip=0.0.0.0
-endip=255.255.255.255
+export startip=0.0.0.0
+export endip=0.0.0.0
 
 # Create a resource group
-az group create -n myResourceGroup -l northcentralus
+az group create \
+	--name myResourceGroup \
+	--location westeurope
 
 # Create a logical server in the resource group
-az sql server create -n $servername -g myResourceGroup -l northcentralus \
-	--administrator-login $adminlogin --administrator-login-password $password
+az sql server create \
+	--name $servername \
+	--resource-group myResourceGroup \
+	--location westeurope  \
+	--admin-user $adminlogin \
+	--admin-password $password
 
 # Configure a firewall rule for the server
-az sql server firewall create -g myResourceGroup --server-name $servername \
-	-n AllowYourIp --start-ip-address $startip --end-ip-address $endip
+az sql server firewall-rule create \
+	--resource-group myResourceGroup \
+	--server $servername \
+	-n AllowYourIp \
+	--start-ip-address $startip \
+	--end-ip-address $endip
 
 # Create a database in the server
-az sql db create -g myResourceGroup -l northcentralus --server-name $servername \
-	-n mySampleDatabase --requested-service-objective-name S0
+az sql db create \
+	--resource-group myResourceGroup \
+	--server $servername \
+	--name mySampleDatabase \
+	--sample-name AdventureWorksLT \
+	--service-objective S0
 
